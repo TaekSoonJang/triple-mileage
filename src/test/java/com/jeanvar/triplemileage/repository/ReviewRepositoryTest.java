@@ -93,6 +93,7 @@ class ReviewRepositoryTest {
     @Test
     void existsByPlace() {
         Place place = new Place();
+        place = entityManager.persist(place);
 
         assertThat(reviewRepository.existsByPlace(place)).isFalse();
     }
