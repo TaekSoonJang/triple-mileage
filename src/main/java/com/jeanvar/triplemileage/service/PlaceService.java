@@ -3,10 +3,14 @@ package com.jeanvar.triplemileage.service;
 import com.jeanvar.triplemileage.domain.*;
 import com.jeanvar.triplemileage.repository.*;
 import lombok.AllArgsConstructor;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.UUID;
 
+@Service
+@Transactional
 @AllArgsConstructor
 public class PlaceService {
     private PointsService pointsService;

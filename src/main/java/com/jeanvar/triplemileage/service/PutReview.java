@@ -3,6 +3,7 @@ package com.jeanvar.triplemileage.service;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -11,7 +12,7 @@ import java.util.UUID;
 public class PutReview {
     private UUID placeId;
     private UUID userId;
-    private String content;
-    private List<UUID> attachedPhotoIds;
-    private List<UUID> deletedPhotoIds;
+    private String content = "";
+    private List<UUID> attachedPhotoIds = new ArrayList<>();
+    private List<UUID> deletedPhotoIds = new ArrayList<>();
 }
