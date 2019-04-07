@@ -88,6 +88,12 @@ class ReviewRepositoryTest {
         r2 = reviewRepository.save(r2);
 
         assertThatExceptionOfType(PersistenceException.class).isThrownBy(() -> entityManager.flush());
+    }
 
+    @Test
+    void existsByPlace() {
+        Place place = new Place();
+
+        assertThat(reviewRepository.existsByPlace(place)).isFalse();
     }
 }

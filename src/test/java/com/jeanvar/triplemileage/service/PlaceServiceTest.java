@@ -52,7 +52,6 @@ class PlaceServiceTest {
         p2 = new Photo();
 
         when(reviewRepository.save(any(Review.class))).thenAnswer(i -> i.getArgument(0, Review.class));
-
     }
 
     @Test
@@ -78,6 +77,7 @@ class PlaceServiceTest {
         assertThat(registered.getContent()).isEqualTo(content);
         assertThat(registered.getAttachedPhotos()).containsExactly(p1, p2);
 
-        verify(pointService, times(1)).updatePoint(eq(user), any(Review.class));
+        verify(pointService, times(1))
+                .updatePointByRegisteringReview(eq(user), any(Review.class));
     }
 }

@@ -31,7 +31,7 @@ public class PlaceService {
         review.setContent(putReview.getContent());
         review.attachPhotos(attachedPhotos);
 
-        pointService.updatePoint(user, review);
+        pointService.updatePointByRegisteringReview(user, review);
 
         return reviewRepository.save(review);
     }
