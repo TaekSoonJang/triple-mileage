@@ -1,5 +1,6 @@
 package com.jeanvar.triplemileage.repository;
 
+import com.jeanvar.triplemileage.domain.Photo;
 import com.jeanvar.triplemileage.domain.Place;
 import com.jeanvar.triplemileage.domain.Review;
 import com.jeanvar.triplemileage.domain.User;
@@ -7,6 +8,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
+
+import java.util.Arrays;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -38,10 +41,19 @@ class ReviewRepositoryTest {
         place.setName("new place");
         place = entityManager.persist(place);
 
+        Photo p1 = new Photo();
+        p1.setUrl("http://path/to/p1");
+        p1 = entityManager.persist(p1);
+
+        Photo p2 = new Photo();
+        p2.setUrl("http://path/to/p2");
+        p2 = entityManager.persist(p2);
+
         Review review = new Review();
         review.setUser(user);
         review.setPlace(place);
         review.setContent("Liked!");
+        review.attachPhotos(Arrays.asList(p1, p2));
 
         Review saved = reviewRepository.save(review);
         entityManager.flush();
@@ -51,5 +63,8 @@ class ReviewRepositoryTest {
 
         assertThat(found.getUser().getId()).isEqualTo(user.getId());
         assertThat(found.getPlace().getId()).isEqualTo(place.getId());
+        assertThat(found.getAttachedPhotos()).hasSize(2);
+        assertThat(found.getAttachedPhotos().get(0).getId()).isEqualTo(p1.getId());
+        assertThat(found.getAttachedPhotos().get(1).getId()).isEqualTo(p2.getId());
     }
 }
