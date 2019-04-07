@@ -17,7 +17,7 @@ public class ReviewPhoto {
     @ManyToOne
     private Review review;
 
-    @JoinColumn(name = "PHOTO")
+    @JoinColumn(name = "PHOTO_ID")
     @ManyToOne
     private Photo photo;
 }
