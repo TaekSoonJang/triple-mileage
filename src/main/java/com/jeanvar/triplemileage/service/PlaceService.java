@@ -14,6 +14,7 @@ import java.util.List;
 
 @AllArgsConstructor
 public class PlaceService {
+    private PointService pointService;
     private UserRepository userRepository;
     private PlaceRepository placeRepository;
     private PhotoRepository photoRepository;
@@ -29,6 +30,8 @@ public class PlaceService {
         review.setPlace(place);
         review.setContent(putReview.getContent());
         review.attachPhotos(attachedPhotos);
+
+        pointService.updatePoint(user, review);
 
         return reviewRepository.save(review);
     }

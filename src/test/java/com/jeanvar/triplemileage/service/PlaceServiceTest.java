@@ -8,26 +8,26 @@ import com.jeanvar.triplemileage.repository.PhotoRepository;
 import com.jeanvar.triplemileage.repository.PlaceRepository;
 import com.jeanvar.triplemileage.repository.ReviewRepository;
 import com.jeanvar.triplemileage.repository.UserRepository;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class PlaceServiceTest {
     @InjectMocks
     PlaceService placeService;
 
+    @Mock
+    PointService pointService;
     @Mock
     UserRepository userRepository;
     @Mock
@@ -37,16 +37,26 @@ class PlaceServiceTest {
     @Mock
     ReviewRepository reviewRepository;
 
-    @Test
-    void registerReview() {
-        User user = new User();
-        Place place = new Place();
-        String content = "content";
-        Photo p1 = new Photo();
-        Photo p2 = new Photo();
+    private User user;
+    private Place place;
+    private String content;
+    private Photo p1;
+    private Photo p2;
+
+    @BeforeEach
+    void setUp() {
+        user = new User();
+        place = new Place();
+        content = "content";
+        p1 = new Photo();
+        p2 = new Photo();
 
         when(reviewRepository.save(any(Review.class))).thenAnswer(i -> i.getArgument(0, Review.class));
 
+    }
+
+    @Test
+    void registerReview() {
         UUID placeId = place.getId();
         UUID userId = user.getId();
         List<UUID> attachedPhotoIds = Arrays.asList(p1.getId(), p2.getId());
@@ -67,5 +77,7 @@ class PlaceServiceTest {
         assertThat(registered.getPlace()).isEqualTo(place);
         assertThat(registered.getContent()).isEqualTo(content);
         assertThat(registered.getAttachedPhotos()).containsExactly(p1, p2);
+
+        verify(pointService, times(1)).updatePoint(eq(user), any(Review.class));
     }
 }
