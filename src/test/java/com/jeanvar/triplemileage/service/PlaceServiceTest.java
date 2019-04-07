@@ -86,4 +86,32 @@ class PlaceServiceTest {
         verify(reviewRepository, times(1)).deleteById(reviewId);
         verify(pointService, times(1)).withdrawPointsByDeletingReview(reviewId);
     }
+
+    @Test
+    void modifyReview() {
+        User user = new User();
+        Photo photo = new Photo();
+
+        Review review = new Review();
+        review.setUser(user);
+        review.setContent("before");
+        review.attachPhotos(Collections.singletonList(photo));
+        review.setPoints(3);
+
+        PutReview putReview = new PutReview();
+        putReview.setContent("after");
+        putReview.setDeletedPhotoIds(Collections.singletonList(photo.getId()));
+
+        when(reviewRepository.findById(review.getId())).thenReturn(Optional.of(review));
+        when(photoRepository.findAllById(Collections.singletonList(photo.getId())))
+            .thenReturn(Collections.singletonList(photo));
+
+        placeService.modifyReview(review.getId(), putReview);
+
+        assertThat(review.getContent()).isEqualTo("after");
+        assertThat(review.getAttachedPhotos()).isEmpty();
+
+        verify(pointService, times(1))
+            .updatePointsByModifyingReview(user, review, 3);
+    }
 }

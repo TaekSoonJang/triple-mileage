@@ -13,4 +13,5 @@ public class PutReview {
     private UUID userId;
     private String content;
     private List<UUID> attachedPhotoIds;
+    private List<UUID> deletedPhotoIds;
 }

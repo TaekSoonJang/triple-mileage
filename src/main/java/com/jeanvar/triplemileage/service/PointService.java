@@ -15,19 +15,7 @@ public class PointService {
     private PointsHistoryRepository pointsHistoryRepository;
 
     public void updatePointsByRegisteringReview(User user, Review review) {
-        int pointsAdded = 0;
-
-        if (review.getContent().length() > 0) {
-            pointsAdded += 1;
-        }
-
-        if (review.getAttachedPhotos().size() > 0) {
-            pointsAdded += 1;
-        }
-
-        if (!reviewRepository.existsByPlace(review.getPlace())) {
-            pointsAdded += 1;
-        }
+        int pointsAdded = calculatePoints(review);
 
         review.setPoints(pointsAdded);
         user.setPoints(user.getPoints() + pointsAdded);
@@ -38,6 +26,32 @@ public class PointService {
         pointsHistory.setReason(String.format(
             "Added %d points by registering a review.",
             pointsAdded
+        ));
+
+        pointsHistoryRepository.save(pointsHistory);
+    }
+
+    public void updatePointsByModifyingReview(User user, Review review, int previousReviewPoints) {
+        int modifiedPoints = calculatePoints(review);
+
+        if (previousReviewPoints == modifiedPoints) {
+            return;
+        }
+
+        int diff = modifiedPoints - previousReviewPoints;
+
+        user.setPoints(user.getPoints() + diff);
+        review.setPoints(modifiedPoints);
+
+        PointsHistory pointsHistory = new PointsHistory();
+        pointsHistory.setUser(user);
+        pointsHistory.setPointsChanged(diff);
+
+        String verb = diff > 0 ? "Added" : "Withdrew";
+        pointsHistory.setReason(String.format(
+            "%s %d points by modifying a review.",
+            verb,
+            diff
         ));
 
         pointsHistoryRepository.save(pointsHistory);
@@ -58,5 +72,23 @@ public class PointService {
         ));
 
         pointsHistoryRepository.save(pointsHistory);
+    }
+
+    private int calculatePoints(Review review) {
+        int points = 0;
+
+        if (review.getContent().length() > 0) {
+            points += 1;
+        }
+
+        if (review.getAttachedPhotos().size() > 0) {
+            points += 1;
+        }
+
+        if (review.isFirst()) {
+            points += 1;
+        }
+
+        return points;
     }
 }

@@ -39,13 +39,28 @@ class PointServiceTest {
         review.setPlace(place);
         review.setContent("aa"); // +1
         review.attachPhotos(Collections.singletonList(photo)); // +1
-
-        when(reviewRepository.existsByPlace(review.getPlace())).thenReturn(false); // +1 for the first review
+        review.setFirst(true); // +1
 
         pointService.updatePointsByRegisteringReview(user ,review);
 
         assertThat(user.getPoints()).isEqualTo(3);
         assertThat(review.getPoints()).isEqualTo(3);
+
+        verify(pointsHistoryRepository, times(1)).save(any(PointsHistory.class));
+    }
+
+    @Test
+    void updatePointsByModifyingReview() {
+        User user = new User();
+        user.setPoints(10);
+
+        Review review = new Review();
+        review.setContent("a"); // +1
+
+        pointService.updatePointsByModifyingReview(user, review, 2);
+
+        assertThat(user.getPoints()).isEqualTo(9);
+        assertThat(review.getPoints()).isEqualTo(1);
 
         verify(pointsHistoryRepository, times(1)).save(any(PointsHistory.class));
     }

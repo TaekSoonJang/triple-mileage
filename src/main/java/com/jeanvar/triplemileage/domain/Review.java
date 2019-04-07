@@ -39,6 +39,9 @@ public class Review extends TripleEntity {
     @Setter(AccessLevel.NONE)
     private List<ReviewPhoto> attachedPhotos = new ArrayList<>();
 
+    @Column(name = "FIRST", columnDefinition = "BOOLEAN")
+    private boolean first;
+
     public void attachPhotos(List<Photo> attachedPhotos) {
         List<ReviewPhoto> reviewPhotos = attachedPhotos.stream()
                 .map(p -> {
@@ -57,6 +60,14 @@ public class Review extends TripleEntity {
         return attachedPhotos.stream()
                 .map(ReviewPhoto::getPhoto)
                 .collect(Collectors.toList());
+    }
+
+    public void deleteAttachedPhotos(List<Photo> deletingPhotos) {
+        List<ReviewPhoto> deletes = this.attachedPhotos.stream()
+            .filter(i -> deletingPhotos.contains(i.getPhoto()))
+            .collect(Collectors.toList());
+
+        this.attachedPhotos.removeAll(deletes);
     }
 }
 

@@ -1,10 +1,7 @@
 package com.jeanvar.triplemileage.service;
 
 import com.jeanvar.triplemileage.domain.*;
-import com.jeanvar.triplemileage.repository.PhotoRepository;
-import com.jeanvar.triplemileage.repository.PlaceRepository;
-import com.jeanvar.triplemileage.repository.ReviewRepository;
-import com.jeanvar.triplemileage.repository.UserRepository;
+import com.jeanvar.triplemileage.repository.*;
 import lombok.AllArgsConstructor;
 
 import java.util.List;
@@ -28,6 +25,7 @@ public class PlaceService {
         review.setPlace(place);
         review.setContent(putReview.getContent());
         review.attachPhotos(attachedPhotos);
+        review.setFirst(!reviewRepository.existsByPlace(place));
 
         pointService.updatePointsByRegisteringReview(user, review);
 
@@ -37,5 +35,16 @@ public class PlaceService {
     public void deleteReview(UUID reviewId) {
         pointService.withdrawPointsByDeletingReview(reviewId);
         reviewRepository.deleteById(reviewId);
+    }
+
+    public void modifyReview(UUID reviewId, PutReview putReview) {
+        Review review = reviewRepository.findById(reviewId).orElseThrow(RuntimeException::new);
+        List<Photo> deletingPhotos = photoRepository.findAllById(putReview.getDeletedPhotoIds());
+        int previousPoints = review.getPoints();
+
+        review.setContent(putReview.getContent());
+        review.deleteAttachedPhotos(deletingPhotos);
+
+        pointService.updatePointsByModifyingReview(review.getUser(), review, previousPoints);
     }
 }
