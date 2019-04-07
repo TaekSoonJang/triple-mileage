@@ -19,9 +19,9 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-class PointServiceTest {
+class PointsServiceTest {
     @InjectMocks
-    PointService pointService;
+    PointsService pointsService;
 
     @Mock
     ReviewRepository reviewRepository;
@@ -41,7 +41,7 @@ class PointServiceTest {
         review.attachPhotos(Collections.singletonList(photo)); // +1
         review.setFirst(true); // +1
 
-        pointService.updatePointsByRegisteringReview(user ,review);
+        pointsService.updatePointsByRegisteringReview(user ,review);
 
         assertThat(user.getPoints()).isEqualTo(3);
         assertThat(review.getPoints()).isEqualTo(3);
@@ -57,7 +57,7 @@ class PointServiceTest {
         Review review = new Review();
         review.setContent("a"); // +1
 
-        pointService.updatePointsByModifyingReview(user, review, 2);
+        pointsService.updatePointsByModifyingReview(user, review, 2);
 
         assertThat(user.getPoints()).isEqualTo(9);
         assertThat(review.getPoints()).isEqualTo(1);
@@ -76,7 +76,7 @@ class PointServiceTest {
 
         when(reviewRepository.findById(review.getId())).thenReturn(Optional.of(review));
 
-        pointService.withdrawPointsByDeletingReview(review.getId());
+        pointsService.withdrawPointsByDeletingReview(review.getId());
 
         assertThat(user.getPoints()).isEqualTo(7);
 

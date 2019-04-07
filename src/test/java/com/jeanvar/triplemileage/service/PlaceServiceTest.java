@@ -21,7 +21,7 @@ class PlaceServiceTest {
     PlaceService placeService;
 
     @Mock
-    PointService pointService;
+    PointsService pointsService;
     @Mock
     UserRepository userRepository;
     @Mock
@@ -72,7 +72,7 @@ class PlaceServiceTest {
         assertThat(registered.getContent()).isEqualTo(content);
         assertThat(registered.getAttachedPhotos()).containsExactly(p1, p2);
 
-        verify(pointService, times(1))
+        verify(pointsService, times(1))
                 .updatePointsByRegisteringReview(eq(user), any(Review.class));
     }
 
@@ -84,7 +84,7 @@ class PlaceServiceTest {
         placeService.deleteReview(reviewId);
 
         verify(reviewRepository, times(1)).deleteById(reviewId);
-        verify(pointService, times(1)).withdrawPointsByDeletingReview(reviewId);
+        verify(pointsService, times(1)).withdrawPointsByDeletingReview(reviewId);
     }
 
     @Test
@@ -111,7 +111,7 @@ class PlaceServiceTest {
         assertThat(review.getContent()).isEqualTo("after");
         assertThat(review.getAttachedPhotos()).isEmpty();
 
-        verify(pointService, times(1))
+        verify(pointsService, times(1))
             .updatePointsByModifyingReview(user, review, 3);
     }
 }

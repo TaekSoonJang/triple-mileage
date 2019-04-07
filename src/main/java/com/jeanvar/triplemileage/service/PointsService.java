@@ -10,7 +10,7 @@ import lombok.AllArgsConstructor;
 import java.util.UUID;
 
 @AllArgsConstructor
-public class PointService {
+public class PointsService {
     private ReviewRepository reviewRepository;
     private PointsHistoryRepository pointsHistoryRepository;
 

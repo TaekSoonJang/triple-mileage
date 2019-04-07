@@ -9,7 +9,7 @@ import java.util.UUID;
 
 @AllArgsConstructor
 public class PlaceService {
-    private PointService pointService;
+    private PointsService pointsService;
     private UserRepository userRepository;
     private PlaceRepository placeRepository;
     private PhotoRepository photoRepository;
@@ -27,13 +27,13 @@ public class PlaceService {
         review.attachPhotos(attachedPhotos);
         review.setFirst(!reviewRepository.existsByPlace(place));
 
-        pointService.updatePointsByRegisteringReview(user, review);
+        pointsService.updatePointsByRegisteringReview(user, review);
 
         return reviewRepository.save(review);
     }
 
     public void deleteReview(UUID reviewId) {
-        pointService.withdrawPointsByDeletingReview(reviewId);
+        pointsService.withdrawPointsByDeletingReview(reviewId);
         reviewRepository.deleteById(reviewId);
     }
 
@@ -45,6 +45,6 @@ public class PlaceService {
         review.setContent(putReview.getContent());
         review.deleteAttachedPhotos(deletingPhotos);
 
-        pointService.updatePointsByModifyingReview(review.getUser(), review, previousPoints);
+        pointsService.updatePointsByModifyingReview(review.getUser(), review, previousPoints);
     }
 }
