@@ -1,17 +1,18 @@
 package com.jeanvar.triplemileage.integration;
 
-import com.jeanvar.triplemileage.domain.Photo;
-import com.jeanvar.triplemileage.domain.Place;
-import com.jeanvar.triplemileage.domain.Review;
-import com.jeanvar.triplemileage.domain.User;
+import com.jeanvar.triplemileage.domain.*;
 import com.jeanvar.triplemileage.repository.PhotoRepository;
 import com.jeanvar.triplemileage.repository.PlaceRepository;
+import com.jeanvar.triplemileage.repository.PointsHistoryRepository;
 import com.jeanvar.triplemileage.repository.UserRepository;
 import com.jeanvar.triplemileage.service.PlaceService;
 import com.jeanvar.triplemileage.service.PutReview;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.annotation.Commit;
+import org.springframework.test.context.ActiveProfiles;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -20,6 +21,7 @@ import java.util.List;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest
+@ActiveProfiles("test")
 class IntegrationTest {
     @Autowired
     UserRepository userRepository;
@@ -27,11 +29,14 @@ class IntegrationTest {
     PlaceRepository placeRepository;
     @Autowired
     PhotoRepository photoRepository;
+    @Autowired
+    PointsHistoryRepository pointsHistoryRepository;
 
     @Autowired
     PlaceService placeService;
 
     @Test
+    @Transactional
     void integration() {
         User user1 = new User();
         user1.setName("taeksoon");
@@ -64,6 +69,7 @@ class IntegrationTest {
 
         user1 = userRepository.findById(user1.getId()).get();
         assertThat(user1.getPoints()).isEqualTo(3);
+        assertThat(pointsHistoryRepository.count()).isEqualTo(1);
 
         // User1 registers Review2 on Place2 (+3 pts)
         PutReview putReview2 = new PutReview();
@@ -76,6 +82,7 @@ class IntegrationTest {
 
         user1 = userRepository.findById(user1.getId()).get();
         assertThat(user1.getPoints()).isEqualTo(6);
+        assertThat(pointsHistoryRepository.count()).isEqualTo(2);
 
         // User2 registers Review3 on Place1 (+1 pts)
         PutReview putReview3 = new PutReview();
@@ -87,12 +94,14 @@ class IntegrationTest {
 
         user2 = userRepository.findById(user2.getId()).get();
         assertThat(user2.getPoints()).isEqualTo(1);
+        assertThat(pointsHistoryRepository.count()).isEqualTo(3);
 
         // User1 deletes Review2 on Place2 (- 3pts)
         placeService.deleteReview(review2.getId());
 
         user1 = userRepository.findById(user1.getId()).get();
         assertThat(user1.getPoints()).isEqualTo(3);
+        assertThat(pointsHistoryRepository.count()).isEqualTo(4);
 
         // User2 registers Review4 on Place 2 (+ 2pts)
         PutReview putReview4 = new PutReview();
@@ -104,6 +113,7 @@ class IntegrationTest {
 
         user2 = userRepository.findById(user2.getId()).get();
         assertThat(user2.getPoints()).isEqualTo(3);
+        assertThat(pointsHistoryRepository.count()).isEqualTo(5);
 
         // User1 modifies Review1 on Place1 (- 1pts)
         PutReview putReview5 = new PutReview();
@@ -116,5 +126,6 @@ class IntegrationTest {
 
         user1 = userRepository.findById(user1.getId()).get();
         assertThat(user1.getPoints()).isEqualTo(2);
+        assertThat(pointsHistoryRepository.count()).isEqualTo(6);
     }
 }
