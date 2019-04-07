@@ -12,6 +12,6 @@ import javax.persistence.Table;
 @Getter
 @Setter
 public class Photo extends TripleEntity {
-    @Column
+    @Column(name = "URL")
     private String url;
 }

@@ -12,6 +12,6 @@ import javax.persistence.Table;
 @Getter
 @Setter
 public class Place extends TripleEntity {
-    @Column
+    @Column(name = "NAME")
     private String name;
 }

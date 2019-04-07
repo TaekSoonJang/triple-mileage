@@ -10,19 +10,25 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Entity
-@Table(name = "REVIEW")
 @Getter
 @Setter
+@Table(
+        name = "REVIEW",
+        uniqueConstraints = @UniqueConstraint(
+                name = "ONE_REVIEW_PER_USER_AND_PLACE",
+                columnNames = {"USER_ID", "PLACE_ID"}
+        )
+)
 public class Review extends TripleEntity {
-    @JoinColumn
+    @JoinColumn(name = "USER_ID")
     @ManyToOne
     private User user;
 
-    @JoinColumn
+    @JoinColumn(name = "PLACE_ID")
     @ManyToOne
     private Place place;
 
-    @Column
+    @Column(name = "CONTENT")
     private String content;
 
     @OneToMany(mappedBy = "review", cascade = CascadeType.ALL, orphanRemoval = true)
@@ -49,3 +55,5 @@ public class Review extends TripleEntity {
                 .collect(Collectors.toList());
     }
 }
+
+

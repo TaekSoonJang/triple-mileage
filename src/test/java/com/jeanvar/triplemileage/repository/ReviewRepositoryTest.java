@@ -9,9 +9,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 
+import javax.persistence.PersistenceException;
 import java.util.Arrays;
 
-import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.*;
 
 @DataJpaTest
 class ReviewRepositoryTest {
@@ -66,5 +67,27 @@ class ReviewRepositoryTest {
         assertThat(found.getAttachedPhotos()).hasSize(2);
         assertThat(found.getAttachedPhotos().get(0).getId()).isEqualTo(p1.getId());
         assertThat(found.getAttachedPhotos().get(1).getId()).isEqualTo(p2.getId());
+    }
+
+    @Test
+    void user_place_unique() {
+        User user = new User();
+        user = entityManager.persist(user);
+
+        Place place = new Place();
+        place = entityManager.persist(place);
+
+        Review r1 = new Review();
+        r1.setUser(user);
+        r1.setPlace(place);
+        r1 = reviewRepository.save(r1);
+
+        Review r2 = new Review();
+        r2.setUser(user);
+        r2.setPlace(place);
+        r2 = reviewRepository.save(r2);
+
+        assertThatExceptionOfType(PersistenceException.class).isThrownBy(() -> entityManager.flush());
+
     }
 }

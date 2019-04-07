@@ -12,9 +12,9 @@ import javax.persistence.Table;
 @Getter
 @Setter
 public class User extends TripleEntity {
-    @Column
+    @Column(name = "NAME")
     private String name;
 
-    @Column
+    @Column(name = "POINTS")
     private int points;
 }

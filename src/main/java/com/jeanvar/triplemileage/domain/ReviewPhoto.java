@@ -13,11 +13,11 @@ import javax.persistence.Table;
 @Getter
 @Setter
 public class ReviewPhoto extends TripleEntity {
-    @JoinColumn
+    @JoinColumn(name = "REVIEW_ID")
     @ManyToOne
     private Review review;
 
-    @JoinColumn
+    @JoinColumn(name = "PHOTO")
     @ManyToOne
     private Photo photo;
 }
