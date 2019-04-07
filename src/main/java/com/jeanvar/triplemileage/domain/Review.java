@@ -33,6 +33,7 @@ public class Review extends TripleEntity {
 
     @OneToMany(mappedBy = "review", cascade = CascadeType.ALL, orphanRemoval = true)
     @Getter(AccessLevel.NONE)
+    @Setter(AccessLevel.NONE)
     private List<ReviewPhoto> attachedPhotos = new ArrayList<>();
 
     public void attachPhotos(List<Photo> attachedPhotos) {
