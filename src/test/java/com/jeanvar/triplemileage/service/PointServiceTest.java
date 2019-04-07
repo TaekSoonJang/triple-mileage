@@ -10,6 +10,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Collections;
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
@@ -28,7 +29,7 @@ class PointServiceTest {
     PointsHistoryRepository pointsHistoryRepository;
 
     @Test
-    void updatePoint_whenRegisteringReview() {
+    void updatePointsByRegisteringReview() {
         User user = new User();
         Photo photo = new Photo();
         Place place = new Place();
@@ -41,9 +42,28 @@ class PointServiceTest {
 
         when(reviewRepository.existsByPlace(review.getPlace())).thenReturn(false); // +1 for the first review
 
-        pointService.updatePointByRegisteringReview(user ,review);
+        pointService.updatePointsByRegisteringReview(user ,review);
 
         assertThat(user.getPoints()).isEqualTo(3);
+        assertThat(review.getPoints()).isEqualTo(3);
+
+        verify(pointsHistoryRepository, times(1)).save(any(PointsHistory.class));
+    }
+
+    @Test
+    void withdrawPointsByDeletingReview() {
+        User user = new User();
+        user.setPoints(10);
+
+        Review review = new Review();
+        review.setUser(user);
+        review.setPoints(3);
+
+        when(reviewRepository.findById(review.getId())).thenReturn(Optional.of(review));
+
+        pointService.withdrawPointsByDeletingReview(review.getId());
+
+        assertThat(user.getPoints()).isEqualTo(7);
 
         verify(pointsHistoryRepository, times(1)).save(any(PointsHistory.class));
     }

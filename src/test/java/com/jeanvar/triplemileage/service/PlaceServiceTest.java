@@ -46,8 +46,6 @@ class PlaceServiceTest {
         content = "content";
         p1 = new Photo();
         p2 = new Photo();
-
-        when(reviewRepository.save(any(Review.class))).thenAnswer(i -> i.getArgument(0, Review.class));
     }
 
     @Test
@@ -59,6 +57,7 @@ class PlaceServiceTest {
         when(userRepository.findById(userId)).thenReturn(Optional.of(user));
         when(placeRepository.findById(placeId)).thenReturn(Optional.of(place));
         when(photoRepository.findAllById(attachedPhotoIds)).thenReturn(Arrays.asList(p1, p2));
+        when(reviewRepository.save(any(Review.class))).thenAnswer(i -> i.getArgument(0, Review.class));
 
         PutReview putReview = new PutReview();
         putReview.setPlaceId(placeId);
@@ -74,6 +73,17 @@ class PlaceServiceTest {
         assertThat(registered.getAttachedPhotos()).containsExactly(p1, p2);
 
         verify(pointService, times(1))
-                .updatePointByRegisteringReview(eq(user), any(Review.class));
+                .updatePointsByRegisteringReview(eq(user), any(Review.class));
+    }
+
+    @Test
+    void deleteReview() {
+        Review review = new Review();
+        UUID reviewId = review.getId();
+
+        placeService.deleteReview(reviewId);
+
+        verify(reviewRepository, times(1)).deleteById(reviewId);
+        verify(pointService, times(1)).withdrawPointsByDeletingReview(reviewId);
     }
 }

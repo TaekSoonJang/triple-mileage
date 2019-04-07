@@ -29,7 +29,10 @@ public class Review extends TripleEntity {
     private Place place;
 
     @Column(name = "CONTENT")
-    private String content;
+    private String content = "";
+
+    @Column(name = "POINTS")
+    private int points;
 
     @OneToMany(mappedBy = "review", cascade = CascadeType.ALL, orphanRemoval = true)
     @Getter(AccessLevel.NONE)

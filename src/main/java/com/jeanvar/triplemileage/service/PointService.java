@@ -7,12 +7,14 @@ import com.jeanvar.triplemileage.repository.PointsHistoryRepository;
 import com.jeanvar.triplemileage.repository.ReviewRepository;
 import lombok.AllArgsConstructor;
 
+import java.util.UUID;
+
 @AllArgsConstructor
 public class PointService {
     private ReviewRepository reviewRepository;
     private PointsHistoryRepository pointsHistoryRepository;
 
-    public void updatePointByRegisteringReview(User user, Review review) {
+    public void updatePointsByRegisteringReview(User user, Review review) {
         int pointsAdded = 0;
 
         if (review.getContent().length() > 0) {
@@ -27,6 +29,7 @@ public class PointService {
             pointsAdded += 1;
         }
 
+        review.setPoints(pointsAdded);
         user.setPoints(user.getPoints() + pointsAdded);
 
         PointsHistory pointsHistory = new PointsHistory();
@@ -35,6 +38,23 @@ public class PointService {
         pointsHistory.setReason(String.format(
             "Added %d points by registering a review.",
             pointsAdded
+        ));
+
+        pointsHistoryRepository.save(pointsHistory);
+    }
+
+    public void withdrawPointsByDeletingReview(UUID reviewId) {
+        Review review = reviewRepository.findById(reviewId).orElseThrow(RuntimeException::new);
+        User user = review.getUser();
+
+        user.setPoints(user.getPoints() - review.getPoints());
+
+        PointsHistory pointsHistory = new PointsHistory();
+        pointsHistory.setUser(user);
+        pointsHistory.setPointsChanged(-review.getPoints());
+        pointsHistory.setReason(String.format(
+            "Withdrew %d points by deleting a review.",
+            review.getPoints()
         ));
 
         pointsHistoryRepository.save(pointsHistory);

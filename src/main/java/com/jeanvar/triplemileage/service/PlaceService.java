@@ -8,6 +8,7 @@ import com.jeanvar.triplemileage.repository.UserRepository;
 import lombok.AllArgsConstructor;
 
 import java.util.List;
+import java.util.UUID;
 
 @AllArgsConstructor
 public class PlaceService {
@@ -28,8 +29,13 @@ public class PlaceService {
         review.setContent(putReview.getContent());
         review.attachPhotos(attachedPhotos);
 
-        pointService.updatePointByRegisteringReview(user, review);
+        pointService.updatePointsByRegisteringReview(user, review);
 
         return reviewRepository.save(review);
+    }
+
+    public void deleteReview(UUID reviewId) {
+        pointService.withdrawPointsByDeletingReview(reviewId);
+        reviewRepository.deleteById(reviewId);
     }
 }
