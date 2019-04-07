@@ -1,13 +1,7 @@
 package com.jeanvar.triplemileage.service;
 
-import com.jeanvar.triplemileage.domain.Photo;
-import com.jeanvar.triplemileage.domain.Place;
-import com.jeanvar.triplemileage.domain.Review;
-import com.jeanvar.triplemileage.domain.User;
-import com.jeanvar.triplemileage.repository.PhotoRepository;
-import com.jeanvar.triplemileage.repository.PlaceRepository;
-import com.jeanvar.triplemileage.repository.ReviewRepository;
-import com.jeanvar.triplemileage.repository.UserRepository;
+import com.jeanvar.triplemileage.domain.*;
+import com.jeanvar.triplemileage.repository.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -36,6 +30,8 @@ class PlaceServiceTest {
     PhotoRepository photoRepository;
     @Mock
     ReviewRepository reviewRepository;
+    @Mock
+    PointsHistoryRepository pointsHistoryRepository;
 
     private User user;
     private Place place;

@@ -1,9 +1,6 @@
 package com.jeanvar.triplemileage.service;
 
-import com.jeanvar.triplemileage.domain.Photo;
-import com.jeanvar.triplemileage.domain.Place;
-import com.jeanvar.triplemileage.domain.Review;
-import com.jeanvar.triplemileage.domain.User;
+import com.jeanvar.triplemileage.domain.*;
 import com.jeanvar.triplemileage.repository.PhotoRepository;
 import com.jeanvar.triplemileage.repository.PlaceRepository;
 import com.jeanvar.triplemileage.repository.ReviewRepository;
